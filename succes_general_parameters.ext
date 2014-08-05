@@ -1,0 +1,49 @@
+[succes_general_parameters]
+exten => s,1,set(succes2014_LAND=fr)
+exten => s,n,set(succes2014_RDNIS=4405)
+exten => s,n,set(succes2014_DNID=4405)]
+exten => s,n,set(succes2014_SMS_SHORTCODE=1022)
+exten => s,n,set(succes2014_SMS_PREFIXE=+228)
+exten => s,n,set(CONN2=0)
+exten => s,n,set(localCPT=0)
+exten => s,n,set(SOM_SEX=0)
+exten => s,n,set(saisie_nbi_local_CPT_MAX=3)
+exten => s,n,set(saisie_nbv_local_CPT_MAX=3)
+exten => s,n,set(succes2014_LEN_NUMBV_MIN=1); longueur minimum du numero de bv
+exten => s,n,set(succes2014_LEN_NUMBV_MAX=12); longueur maximum du numero de bv
+exten => s,n,set(succes2014_LEN_DATA_MIN=1); longueur minimum d'une donnée
+exten => s,n,set(succes2014_LEN_DATA_MAX=3); longueur maximum d'une donnée
+exten => s,n,set(succes2014_LEN_NBI_MIN=1); longueur minimum de la donnée NBI(Nombre d'inscrit)
+exten => s,n,set(succes2014_LEN_NBI_MAX=6); longueur maximum de la donnée NBI
+exten => s,n,set(succes2014_LEN_NBV_MIN=1); longueur minimum de la donnée NBV(Nombre de votant)
+exten => s,n,set(succes2014_LEN_NBV_MAX=6); longueur maximum de la donnée NBV
+exten => s,n,set(succes2014_LEN_NBN_MIN=1); longueur minimum de la donnée NBN(Nombre de bulletin null)
+exten => s,n,set(succes2014_LEN_NBN_MAX=6); longueur maximum de la donnée NBN
+exten => s,n,set(succes2014_LEN_NB_SUFFRAGE_MIN=1); longueur minimum du suffrage exprimé 
+exten => s,n,set(succes2014_LEN_NB_SUFFRAGE_MAX=6); longueur maximum du suffrage exprimé 
+exten => s,n,set(succes2014_NUMBV=0)
+exten => s,n,set(succes2014_NBI=0)
+exten => s,n,set(succes2014_NBV=0)
+exten => s,n,set(succes2014_NBN=0)
+exten => s,n,set(succes2014_SEX=0)
+exten => s,n,set(succes2014_NBU=0)
+exten => s,n,set(succes2014_saisie_incidents_local_CPT=0)
+exten => s,n,set(succes2014_Incidents_local_CPT1=0)
+exten => s,n,set(succes2014_Incidents_local_CPT2=0)
+exten => s,n,set(succes2014_Incidents_local_CPT3=0)
+exten => s,n,set(succes2014_Incidents_local_CPT4=0)
+exten => s,n,set(succes2014_verif_code_incident_type_CPT=0)
+exten => s,n,set(succes2014_local_CPT=0)
+exten => s,n,set(succes2014_local_CPT1=0)
+exten => s,n,set(succes2014_local_CPT2=0)
+exten => s,n,set(succes2014_local_CPT3=0)
+exten => s,n,set(succes2014_local_CPT4=0)
+exten => s,n,set(succes2014_local_CPT_NBV=0)
+exten => s,n,set(succes2014_local_CPT_SEX=0)
+exten => s,n,set(succes2014_local_CPT_MAX=3)
+exten => s,n,set(succes2014_local_CPT1_MAX=3)
+exten => s,n,set(succes2014_local_CPT2_MAX=3)
+exten => s,n,set(succes2014_NB_INCIDENT=0)
+exten => s,n,set(succes2014_NB_INCIDENT_MAX=0)
+exten => s,n,set(succes2014_NB_INCIDENT_SELECTED=0)
+exten => s,n,set(succes2014_CODE_INCIDENT=0)
