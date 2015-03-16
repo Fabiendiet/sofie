@@ -1,9 +1,0 @@
-[connexions_db]
-exten => s,1,set(succes2014_SMS_IPSERVER=192.168.1.149)
-exten => s,n,set(succes2014_DATABASE_IPSERVER=localhost)
-exten => s,n,set(succes2014_DATABASE_USER=susie)
-exten => s,n,set(succes2014_DATABASE_PASSWD=poiuyt)
-exten => s,n,set(succes2014_DATABASE_STAT_USER=susie)
-exten => s,n,set(succes2014_DATABASE_STAT_PASSWD=poiuyt)
-exten => s,n,set(succes2014_DATABASE_STAT_NAME=stat_succes_svi_db)
-exten => s,n,set(succes2014_DATABASE_NAME=process_succes_svi_db)
