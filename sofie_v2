@@ -275,7 +275,6 @@ exten => s,208,goto(s-verif_delai,GOTO_SYSTEM_ERROR)
 exten => s,6,gotoif($["${ARG4}" = "2"]?ENREG_CONFIRMATION_REPARATEUR:ENREG_CONFIRMATION_CDE)
 
 exten => s-verif_delai,1,gotoif($["${sofie_DELAI_CDE_STATUS}"="NULL"]?GOTO_SYSTEM_ERROR:$[${PRIORITY}+1])
-;exten => s-verif_delai,2,gotoif($["${sofie_CDE_STATUS}"="0"]?GOTO_CONFIRMATION_CDE:$[${PRIORITY}+1])
 exten => s-verif_delai,2,gotoif($["${ARG4}"="2"]?$[${PRIORITY}+1]:GOTO_CONFIRMATION_CDE)
 exten => s-verif_delai,3,gotoif($["${sofie_DELAI_CDE_STATUS}"="1"]?$[${PRIORITY}+1]:s,GOTO_CDE_EXIST)
 exten => s-verif_delai,4(GOTO_CDE_HORS_DELAI),goto(s,ENREG_CONFIRMATION_REPARATEUR_HORS_DELAI);==> marqueur pas maj

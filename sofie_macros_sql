@@ -184,7 +184,7 @@ exten => s,n(SYSTEM_ERROR),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORI
 [macro-sofie_sql_getRegionIdByCodeOuvrage]
 exten => s,1,Macro(sofie_sql_connexion,CONN1,${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
 exten => s,502,goto(sofie_finappel,s,1)
-exten => s,2,set(ARRAY(MYSQL_STATUS,TICKET_PANNE_STATUS)=-1\,0)
+exten => s,2,set(MYSQL_STATUS=0)
 exten => s,n,set(idlocalite=)
 exten => s,n,MYSQL(Query resultid ${CONN1}\ SELECT\ f_getIDRegionByIDAgent(\'${ARG1}\'\)\ AS IDREGION)
 exten => s,5,MYSQL(Fetch foundRow ${resultid} idregion)
