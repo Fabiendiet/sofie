@@ -407,7 +407,7 @@ exten => s-new_panne,4,goto(sofie_finappel,s,1)
 exten => s-notif-panne-sms,1,System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${CALLERID(Num)}&Modem=${sofie_SMS_NUM_MODEM}&Content=VOTRE NOTIFICATION DE PANNE POUR LE FORAGE: ${sofie_CODE_FORAGE} A ETE ENREGISTRE, LA DGEA VOUS REMERCIE.")
 exten => s-notif-panne-sms,n,System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${sofie_NUMERO_REPARATEUR}&Modem=${sofie_SMS_NUM_MODEM}&Content=UNE PANNE A ETE SIGNALE POUR LE FORAGE: ${sofie_CODE_FORAGE} TICKET: ${sofie_TICKET_PANNE}.")
 exten => s-notif-panne-sms,n,System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${sofie_NUMERO_AGENT}&Modem=${sofie_SMS_NUM_MODEM}&Content=UNE PANNE A ETE SIGNALE POUR LE FORAGE: ${sofie_CODE_FORAGE} TICKET: ${sofie_TICKET_PANNE}.")
-exten => s-notif-panne-sms,4,Macro(sofie_enreg_notification,CONN1,2,${sofie_NUMERO_PANNE})
+exten => s-notif-panne-sms,4,Macro(sofie_enreg_notification,CONN1,2,${sofie_TICKET_PANNE})
 exten => s-notif-panne-sms,105,playback(${sofie_audio_file_dir}/${sofie_msg_system_error})
 exten => s-notif-panne-sms,5,goto(s-new_panne,3)
 
