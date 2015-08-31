@@ -2,7 +2,7 @@
 $mysql_host = "localhost";
 $mysql_user = "sofie";
 $mysql_password = "poiuyt";
-$mysql_dbname = "db_sofie";
+$mysql_dbname = "db_sofiev2";
 
 $dbObject = "v_forage_hors_delai_prise_charge";
 $kannel_sendsms_uri = "http://localhost/sms/sendsms.php?";

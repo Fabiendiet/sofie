@@ -220,26 +220,26 @@ exten => s,2,goto(s-enreg_prise_cde,1)
 
 exten => s-enreg_prise_cde,1,Macro(sofie_enreg_confirmation_cde,${sofie_SQL_STORAGE_PROC_ARG})
 exten => s-enreg_prise_cde,102,goto(sofie_finappel,s,1)
-exten => s-enreg_prise_cde,3,gotoif($["${sofie_PROFILE}" = "2"]?s-notif-sms-reparateur,1:s-notif-sms-agent,1)
+exten => s-enreg_prise_cde,2,gotoif($["${sofie_PROFILE}" = "2"]?s-notif-sms-reparateur,1:s-notif-sms-agent,1)
 
-exten => s-enreg_prise_cde,4,playback(${sofie_audio_file_dir}/${sofie_msg_confirmation_cde${sofie_PROFILE}})
-exten => s-enreg_prise_cde,5,Macro(saynumber,${sofie_NB_JOURS_REPARATION},fr)
-exten => s-enreg_prise_cde,6,playback(${sofie_audio_file_dir}/${sofie_msg_nb_jrs_reparation})
-exten => s-enreg_prise_cde,7,goto(sofie_finappel,s,1)
+exten => s-enreg_prise_cde,3,playback(${sofie_audio_file_dir}/${sofie_msg_confirmation_cde${sofie_PROFILE}})
+exten => s-enreg_prise_cde,4,Macro(saynumber,${sofie_NB_JOURS_REPARATION},fr)
+exten => s-enreg_prise_cde,5,playback(${sofie_audio_file_dir}/${sofie_msg_nb_jrs_reparation})
+exten => s-enreg_prise_cde,6,goto(sofie_finappel,s,1)
 
 exten => s-notif-sms-reparateur,1,System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${sofie_NUMERO_COMITE}&Modem=${sofie_SMS_NUM_MODEM}&Content=LA COMMANDE POUR LA REPARATION DE VOTRE FORAGE VIENT ETRE RECEPTION PAR LE REPARATEUR.LA DGEA VOUS REMERCIE.")
 exten => s-notif-sms-reparateur,n,System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${sofie_NUMAPPEL_REP}&Modem=${sofie_SMS_NUM_MODEM}&Content=VOTRE SIGNALEMENT DE RECEPTION DE COMMANDE POUR L OUVRAGE:${sofie_CODE_FORAGE} A ETE ENREGISTRE.NUMERO-PANNE:${sofie_NUMERO_PANNE}.LA DGEA VOUS REMERCIE.")
 exten => s-notif-sms-reparateur,n,System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${sofie_NUMAGENT_FORMA}&Modem=${sofie_SMS_NUM_MODEM}&Content=UN SIGNALEMENT DE RECEPTION DE COMMANDE A ETE ENREGISTE POUR L OUVRAGE:${sofie_CODE_FORAGE}.NUMERO-PANNE:${sofie_NUMERO_PANNE}")
 exten => s-notif-sms-reparateur,4,Macro(sofie_enreg_notification,CONN1,3,${sofie_NUMERO_PANNE})
 exten => s-notif-sms-reparateur,105,playback(${sofie_audio_file_dir}/${sofie_msg_system_error})
-exten => s-notif-sms-reparateur,5,goto(s-enreg_prise_cde,4)
+exten => s-notif-sms-reparateur,5,goto(s-enreg_prise_cde,3)
 
 exten => s-notif-sms-agent,1,System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${sofie_NUMERO_COMITE}&Modem=${sofie_SMS_NUM_MODEM}&Content=LA COMMANDE POUR LA REPARATION DE VOTRE FORAGE A ETE RECEPTIONNE.UN REPARATEUR A ETE MANDATE.LA DGEA VOUS REMERCIE.")
 exten => s-notif-sms-agent,n,System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${sofie_NUMAGENT_FORMA}&Modem=${sofie_SMS_NUM_MODEM}&Content=VOTRE SIGNALEMENT DE RECEPTION DE COMMANDE POUR L OUVRAGE:${sofie_CODE_FORAGE} A ETE ENREGISTRE.NUMERO-PANNE:${sofie_NUMERO_PANNE}.LA DGEA VOUS REMERCIE.")
 exten => s-notif-sms-agent,n,System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${sofie_NUM_SOCIOLOGUE}&Modem=${sofie_SMS_NUM_MODEM}&Content=UNE PRISE EN CHARGE DE LA COMMANDE DE REPARATION DE L OUVRAGE:${sofie_CODE_FORAGE} VIENT D ETRE SIGNALEE.NUMERO-PANNE:${sofie_NUMERO_PANNE}.")
 exten => s-notif-sms-agent,4,Macro(sofie_enreg_notification,CONN1,4,${sofie_NUMERO_PANNE})
 exten => s-notif-sms-agent,105,playback(${sofie_audio_file_dir}/${sofie_msg_system_error})
-exten => s-notif-sms-agent,5,goto(s-enreg_prise_cde,4)
+exten => s-notif-sms-agent,5,goto(s-enreg_prise_cde,3)
 
 [macro-sofie_preprocess_enreg_prise_cde]
 exten => s,1,noop(sofie_SQL_STORAGE_PROC_ARG=${sofie_SQL_STORAGE_PROC_ARG})
