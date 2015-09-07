@@ -104,7 +104,7 @@ exten => s_aucune_saisie-cpt,n,playback(${ARG4})
 exten => s_aucune_saisie-cpt,n,goto(s,REPRISE_SAISIE)
 exten => s_aucune_saisie-cpt,n(GOTO_END),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
 
-[macro-sofie2014split];${ARG1}="one,two,three", ${ARG2}=\,
+[macro-mos_split];${ARG1}="one,two,three", ${ARG2}=\,
 exten => s,1,set(cutVar=)
 exten => s,n,set(SPLIT_LIST_SIZE=0)
 exten => s,n,gotoif($[${ISNULL(${ARG1})}]?exit:$[${PRIORITY}+1])
@@ -133,7 +133,7 @@ exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 ;${ARG1}:chaine
 ;${ARG2}:caractere de remplacement, sauf le caratere |
 ;${ARG3}:caractere recherché dans la chaine
-[macro-sofie2014replace];exten => s,1,Macro(sofie2014replace,one\,two\,three,#,\,)
+[macro-mos_replace];exten => s,1,Macro(mos_replace,one\,two\,three,#,\,)
 exten => s,1,gotoif($[${ISNULL(${ARG1})}]?exit:$[${PRIORITY}+1])
 exten => s,n,gotoif($[${ISNULL(${ARG3})}]?exit:$[${PRIORITY}+1])
 exten => s,n,gotoif($["${ARG2}"="|"]?exit:$[${PRIORITY}+1])
@@ -152,9 +152,9 @@ exten => s,n,Set(newVar=${newVar}${SEP}${cutVar})
 exten => s,n,gotoif($["${LEN(${cutVar})}" = "0"]?exit:$[${PRIORITY}+1])
 exten => s,n,gotoif($["${cutVar}"="${myVar}"]?exit:$[${PRIORITY}+1])
 exten => s,n,goto(loop)
-exten => s,n(exit),Set(sofie2014replace_REPLACE_NEW_VAR=${newVar:1:$[${LEN(${newVar})}-1]})
-exten => s,n,noop(${sofie2014replace_REPLACE_NEW_VAR})
-exten => s,n,Set(${ARG4}=${sofie2014replace_REPLACE_NEW_VAR})
+exten => s,n(exit),Set(mos_replace_REPLACE_NEW_VAR=${newVar:1:$[${LEN(${newVar})}-1]})
+exten => s,n,noop(${mos_replace_REPLACE_NEW_VAR})
+exten => s,n,Set(${ARG4}=${mos_replace_REPLACE_NEW_VAR})
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 
 [macro-svi_menu_v2]
@@ -189,7 +189,7 @@ exten => s_aucune_saisie-cpt,n,goto(s,REPRISE_SAISIE)
 exten => s_aucune_saisie-cpt,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
 exten => s_aucune_saisie-cpt,n(GOTO_END),goto(END)
 
-[macro-sofie2014preproccess_insert_formunlaire];${ARG1}:${NB_LISTE},${ARG3}:recoit la liste des colonnes,${ARG4}:recoit la liste valeurs des colonnes.
+[macro-mos_preproccess_insert_formunlaire];${ARG1}:${NB_LISTE},${ARG3}:recoit la liste des colonnes,${ARG4}:recoit la liste valeurs des colonnes.
 exten => s,1,set(${ARG3}=)
 exten => s,n,set(${ARG4}=)
 exten => s,n,set(VAR_${ARG3}=)
@@ -213,7 +213,7 @@ exten => s,n,noop(VAR_${ARG4}=${VAR_${ARG4}})
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 exten => s,n(error),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+701])
 
-[macro-sofie2014preproccess_insert_formunlaire_qualitatif];${ARG1}:${NB_LISTE}
+[macro-mos_preproccess_insert_formunlaire_qualitatif];${ARG1}:${NB_LISTE}
 exten => s,1,set(${ARG3}=)
 exten => s,n,set(${ARG4}=)
 exten => s,n,set(VAR_${ARG3}=)

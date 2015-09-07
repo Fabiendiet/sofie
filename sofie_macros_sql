@@ -43,6 +43,14 @@ exten => s,n,noop(${INIT_STATUS})
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
 
+;[macro-sofie_sql_getsmscontent]
+;exten => s,1,Macro(sofie_sql_select,t_sms_content,SMS_CONTENT\,DESTINATION_USER_PROFIL,SCRIPT_CONTEXT\=\'sofie_enreg_incident\'\ AND NOTIFICATION_SMS\=\'NOTIF_PANNE\',T)
+;exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
+
+[macro-sofie_sql_getsmscontent]
+exten => s,1,Macro(sofie_sql_select,${ARG1},${ARG2},${ARG3},T)
+exten => s,2,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
+
 [macro-sofie_sql_get_nb_liste_by_codebv]
 ;exten => s,1,Macro(conn,${MYSQLHOST},${MYSQLUSER},${MYSQLPASSWORD},${MYSQLDB})
 ;exten => s,1,Macro(sofie_sql_connexion,CONN1,${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
@@ -543,22 +551,22 @@ exten => s,n(mysql_error),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORIT
 ;COLUMN_${select_column1} -> Renvoi la liste des valeurs pour la colonne select_column1 
 ;exten => s,1,Macro(sofie_sql_select,repartition,"SIGLEPARTI\,CODEPART","CODECELI\=\${CODECELI_VALUE\}")
 [macro-sofie_sql_select]
-exten => s,1,set(ARRAY(NB_LISTE|SELECT_NUMBER_OF_RECORD=0,0)
-exten => s,2,set(localCPT1=-1)
-exten => s,3,noop()
+exten => s,1,set(ARRAY(NB_LISTE|SELECT_NUMBER_OF_RECORD)=0,0)
+exten => s,2,set(ARRAY(localCPT1|foundRow)=-1,-1)
+exten => s,3,set(sofie_sql_select_REPLACE_NEW_VAR=)
 exten => s,4,Macro(sofie_sql_connexion,CONN1,${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
 exten => s,505,goto(sofie_finappel,s,1)
 exten => s,5,gotoif($[${ISNULL(${ARG3})}]?$[${PRIORITY}+1]:$[${PRIORITY}+3])
 exten => s,n,set(WHERE_CLAUSE=)
 exten => s,n,goto(mysql_query)
 exten => s,n,set(WHERE_CLAUSE=WHERE\\ \\${ARG3})
-exten => s,n(mysql_query),Macro(sofie_replace,${ARG2}, ,\,,sofie_sql_select_REPLACE_NEW_VAR)
-exten => s,n,Macro(sofie_split,${ARG2},\,,sofie_sql_select_SPLIT_LIST)
+exten => s,n(mysql_query),Macro(mos_replace,${ARG2}, ,\,,sofie_sql_select_REPLACE_NEW_VAR)
+exten => s,n,Macro(mos_split,${ARG2},\,,sofie_sql_select_SPLIT_LIST)
 exten => s,n,MYSQL(Query resultid ${CONN1}\ SELECT\ \${ARG2}\ FROM\ \${ARG1}\ ${WHERE_CLAUSE})
 exten => s,n(fetchrow),MYSQL(Fetch foundRow ${resultid} ${sofie_sql_select_REPLACE_NEW_VAR})  ; fetch row
 exten => s,n,noop(foundRow=${foundRow})
-exten => s,n,gotoif($["${LEN(${sofie_sql_select_REPLACE_NEW_VAR})}" > "0"]?$[${PRIORITY}+1]:s-hangup,1)
-exten => s,n,GotoIf($["${foundRow}" = "1"]?loop:done)  ; leave loop if no row found
+exten => s,n,GotoIf($[${MATH(${LEN(sofie_sql_select_REPLACE_NEW_VAR)}) > 0)}=TRUE]?$[${PRIORITY}+1]:s-hangup,1)
+exten => s,n,GotoIf($[${MATH(${foundRow} == 1)}=TRUE]?loop:done)
 exten => s,n(loop),set(localCPT1=$[${localCPT1}+1])
 exten => s,n,set(localCPT2=-1)
 exten => s,n(loop2),set(localCPT2=$[${localCPT2}+1])
@@ -719,7 +727,7 @@ exten => s,n(SYSTEM_ERROR),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORI
 exten => s,1,MYSQL(Connect\ CONN1\ ${sofie_DATABASE_IPSERVER}\ ${sofie_DATABASE_USER}\ ${sofie_DATABASE_PASSWD}\ ${sofie_DATABASE_NAME})
 exten => s,n,gotoif($[${MYSQL_STATUS}=0]?$[${PRIORITY}+1]:s-hangup,1)
 exten => s-hangup,1(raccrocher),hangup
-exten => s,3,Macro(sofie_replace,${ARG3},\\\ ,\\\,,sofie_sql_exec_proc_NEW_REPLACE_STR)
+exten => s,3,Macro(mos_replace,${ARG3},\\\ ,\\\,,sofie_sql_exec_proc_NEW_REPLACE_STR)
 exten => s,4,MYSQL(Query resultid ${CONN1}\ CALL\ ${ARG1}(${ARG2}\,${ARG3}\))
 exten => s,n,MYSQL(Query resultid ${CONN1}\ SELECT\ \${ARG3})
 exten => s,n,MYSQL(Fetch foundRow ${resultid} ${sofie_sql_exec_proc_NEW_REPLACE_STR})

@@ -52,7 +52,46 @@ exten => s,n,set(sofie_PASSWD_MIN=4)
 exten => s,n,set(sofie_PASSWD_MAX=4)
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 
+[macro-sofie_send_notifcation]
+exten => s,1,GotoIf($["${ARG1}" = "notif-sms-init-comite"]?s-notif-sms-init-comite,1:$[${PRIORITY}+1])
+exten => s,n,GotoIf($["${ARG1}" = "notif-sms-init-rep"]?s-notif-sms-init-rep,1:$[${PRIORITY}+1])
+exten => s,n,GotoIf($["${ARG1}" = "notif-sms-init-agent"]?s-notif-sms-init-agent,1:$[${PRIORITY}+1])
+exten => s,n,GotoIf($["${ARG1}" = "notif-sms-panne"]?s-notif-sms-panne,1:$[${PRIORITY}+1])
+exten => s,n,GotoIf($["${ARG1}" = "notif-sms-reparation"]?s-notif-sms-reparation,1:$[${PRIORITY}+1])
+exten => s,n,GotoIf($["${ARG1}" = "notif-sms-cde-rep"]?s-notif-sms-cde-rep,1:$[${PRIORITY}+1])
+exten => s,n,GotoIf($["${ARG1}" = "notif-sms-cde-agent"]?s-notif-sms-cde-agent,1:$[${PRIORITY}+1])
+exten => s,n,verbose(1|Erreur: Aucun message trouvÃs.)
 
+exten => s-notif-sms-init-comite,1,set(WHERE=SCRIPT_CONTEXT\=\'sofie_standard_init\'\ AND NOTIFICATION_SMS\=\'NOTIF_INIT_COMITE\')
+exten => s-notif-sms-init-comite,n,goto(s-notif,1)
+
+exten => s-notif-sms-init-rep,1,set(WHERE=SCRIPT_CONTEXT\=\'sofie_standard_init\'\ AND NOTIFICATION_SMS\=\'NOTIF_INIT_REP\')
+exten => s-notif-sms-init-rep,n,goto(s-notif,1)
+
+exten => s-notif-sms-init-agent,1,set(WHERE=SCRIPT_CONTEXT\=\'sofie_standard_init\'\ AND NOTIFICATION_SMS\=\'NOTIF_INIT_AGENT\')
+exten => s-notif-sms-init-agent,n,goto(s-notif,1)
+
+exten => s-notif-sms-panne,1,set(WHERE=SCRIPT_CONTEXT\=\'sofie_enreg_incident\'\ AND NOTIFICATION_SMS\=\'NOTIF_PANNE\')
+exten => s-notif-sms-panne,n,goto(s-notif,1)
+
+exten => s-notif-sms-reparation,1,set(WHERE=SCRIPT_CONTEXT\=\'sofie_enreg_incident\'\ AND NOTIFICATION_SMS\=\'NOTIF_REPARATION\')
+exten => s-notif-sms-reparation,n,goto(s-notif,1)
+
+exten => s-notif-sms-cde-rep,1,set(WHERE=SCRIPT_CONTEXT\=\'sofie_confirmation_cde\'\ AND NOTIFICATION_SMS\=\'NOTIF_CDE_REP\')
+exten => s-notif-sms-cde-rep,n,goto(s-notif,1)
+
+exten => s-notif-sms-cde-agent,1,set(WHERE=SCRIPT_CONTEXT\=\'sofie_confirmation_cde\'\ AND NOTIFICATION_SMS\=\'NOTIF_CDE_AGENT\')
+exten => s-notif-sms-cde-agent,n,goto(s-notif,1)
+
+exten => s-notif,1,set(sofie_sms_local_CPT=-1)
+exten => s-notif,2,Macro(sofie_sql_getsmscontent,t_sms_content,SMS_CONTENT,${WHERE},T_SMS_CONTENT)
+exten => s-notif,102,verbose(1|erreur lors de la reconstitution du message.)
+exten => s-notif,3(NEXT_SMS),set(sofie_sms_local_CPT=$[${sofie_sms_local_CPT}+1])
+exten => s-notif,n,GotoIf($[${MATH(${sofie_sms_local_CPT} <= ${SELECT_NUMBER_OF_RECORD})}=TRUE]?loop:end_loop)
+exten => s-notif,n(loop),System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${CALLERID(Num)}&Modem=${sofie_SMS_NUM_MODEM}&Content=${EVAL(${T_SMS_CONTENT${sofie_sms_local_CPT}})}")
+;exten => s-notif,n(loop),System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${CALLERID(Num)}&Modem=${sofie_SMS_NUM_MODEM}&Content=${T_SMS_CONTENT${sofie_sms_local_CPT}}")
+exten => s-notif,n,goto(NEXT_SMS)
+exten => s-notif,n(end_loop),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 
 [macro-sofie2014get_data];${ARG1}=NBI,${ARG2}=${succes_msg_saisie_nb_inscrit}
 exten => s,1,noop()

@@ -14,26 +14,6 @@ exten => s,n,set(sofie_SMS_IPSERVER=192.168.1.108)
 exten => s,n,set(saisie_nbi_local_CPT_MAX=3)
 exten => s,n,set(saisie_nbv_local_CPT_MAX=3)
 exten => s,n,set(sofie_LONGUEUR_CODE_ZONE=3); longueur code celi
-exten => s,n,set(sofie_NOTIF_PANNE_REPARE1=VOTRE NOTIFICATION DE PANNE POUR LE FORAGE: \${sofie_CODE_FORAGE} A ETE ENREGISTRE, LA DGEA VOUS REMERCIE.); Notification SMS envoye au comite eau apres signalement de reparation d'un ouvrage.
-
-exten => s,n,set(sofie_NOTIF_PANNE_REPARE2=UNE PANNE A ETE SIGNALE POUR LE FORAGE: \${sofie_CODE_FORAGE} TICKET: \${sofie_TICKET_PANNE}.);Notification SMS envoye au reparateur apres signalement de reparation d'un ouvrage.
-
-exten => s,n,set(sofie_NOTIF_PANNE_REPARE3=UNE PANNE A ETE SIGNALE POUR LE FORAGE: \${sofie_CODE_FORAGE} TICKET: \${sofie_TICKET_PANNE}.);Notification SMS envoye a l'agent forma apres signalement de reparation d'un ouvrage.
-
-exten => s,n,set(sofie_NOTIF_NEW_PANNE1=VOTRE NOTIFICATION DE PANNE POUR LE FORAGE: \${sofie_CODE_FORAGE\} A ETE ENREGISTRE, LA DGEA VOUS REMERCIE.");Notification SMS envoye au comite eau apres signalement de panne d'un ouvrage
-
-exten => s,n,set(sofie_NOTIF_NEW_PANNE2=UNE PANNE A ETE SIGNALE POUR LE FORAGE: \${sofie_CODE_FORAGE} TICKET: \${sofie_TICKET_PANNE}.);Notification SMS envoye au reparateur apres signalement de panne d'un ouvrage
-
-exten => s,n,set(sofie_NOTIF_NEW_PANNE3=UNE PANNE A ETE SIGNALE POUR LE FORAGE: \${sofie_CODE_FORAGE} TICKET: \${sofie_TICKET_PANNE}.);Notification SMS envoye a l'agent apres signalement de panne d'un ouvrage
-
-exten => s,n,set(sofie_NOTIF_ABSENCE1=VOS NOTIFICATIONS SOFIE PAR SMS SERONT DESORMAIS TRANSFEREES VERS LE \${sofie_NUM_INTERIM}. LA DGEA VOUS REMERCIE.);Notification SMS envoye a l'agent forma apres signalement d'une absence
-
-exten => s,n,set(sofie_NOTIF_ABSENCE2=LE NUMERO \${CALLERID\(Num\)} VOUS A TRANSFERE SES NOTIFICATIONS SMS SOFIE. LA DGEA VOUS REMERCIE.);Notification SMS envoye a l'agent interimaire apres signalement d'une absence
-
-exten => s,n,set(sofie_NOTIF_REPRISE1=VOTRE NOTIFICATION DE REPRISE DE SERVICE A ETE ENREGISTRE, LA DGEA VOUS REMERCIE.);Notification SMS envoye a l'agent forma apres signalement d'une reprise de service.
-
-exten => s,n,set(sofie_NOTIF_REPRISE1="");
-
 exten => s,n,set(sofie_NB_JOURS_REPARATION=2);
 exten => s,n,set(sofie_LEN_NUM_INTERIM_MIN=8); longueur minimum du numero de telephone agent interimaire
 exten => s,n,set(sofie_LEN_NUM_INTERIM_MAX=8); longueur maximum du numero de telephone agent interimaire
