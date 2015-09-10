@@ -58,8 +58,10 @@ exten => s,n,set(sofie_msg_confirmation_reparation_existe=msg_confirmation_repar
 exten => s,n,set(sofie_msg_confirmation_cde2=msg_confirmation_cde2)
 exten => s,n,set(sofie_msg_confirmation_cde3=msg_confirmation_cde3)
 exten => s,n,set(sofie_msg_confirmation_cde4=msg_confirmation_cde4)
-exten => s,n,set(sofie_msg_nb_jrs_reparation=msg_nb_jrs_reparation)
-exten => s,n,set(sofie_msg_nb_jrs_reparation3=msg_nb_jrs_reparation)
+exten => s,n,set(sofie_msg_nb_jour_reparation=msg_nb_jour_reparation)
+exten => s,n,set(sofie_msg_nb_heure_reparation=msg_nb_heure_reparation)
+exten => s,n,set(sofie_msg_nb_minute_reparation=msg_nb_minute_reparation)
+exten => s,n,set(sofie_msg_nb_second_reparation=msg_nb_second_reparation)
 
 ;[macro-sofie_enreg_signaler_reparation]
 ;exten => s,n,set(sofie_msg_confirmation_reparation=msg_confirmation_reparation)

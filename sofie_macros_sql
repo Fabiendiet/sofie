@@ -43,6 +43,19 @@ exten => s,n,noop(${INIT_STATUS})
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
 
+[macro-sofie_sql_insert_whitelist]
+exten => s,1,Set(DB(whitelist/${ARG1})=1)
+exten => s,n,noop(${DB(whitelist/${ARG1})})
+exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
+
+[macro-sofie_sql_check_whitelist]
+exten => s,1,GotoIf(${DB(whitelist/${ARG1})}?continue:blacklisted)
+exten => s,n(continue),noop(${DB(whitelist/${ARG1})})
+exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
+exten => s,n(blacklisted),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
+;exten => _X.,5,System(/usr/sbin/asterisk -rx "database put whitelist ${ARG1} 1");Permet d ajouter la valeur de ${ARG1} dans la whitelist 
+;exten => _X.,5,GotoIf(${DB_DELETE(whitelist/${ARG1})}?next); Permet de supprimer la  valeur de ${ARG1} de la whitelist
+
 ;[macro-sofie_sql_getsmscontent]
 ;exten => s,1,Macro(sofie_sql_select,t_sms_content,SMS_CONTENT\,DESTINATION_USER_PROFIL,SCRIPT_CONTEXT\=\'sofie_enreg_incident\'\ AND NOTIFICATION_SMS\=\'NOTIF_PANNE\',T)
 ;exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
@@ -105,13 +118,15 @@ exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
 [macro-sofie_sql_restore_idagentforma_by_phonenum]
 exten => s,1,Macro(sofie_sql_connexion,${ARG1},${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
 exten => s,502,goto(sofie_finappel,s,1)
-exten => s,2,MYSQL(Query resultid ${${ARG1}}\ CALL\ P_UPDATE_RESTORE_IDAGENTFORMA_BY_NUMAPPEL\(\'${ARG2}\'\,@_UPDATE_RESULT\))
-exten => s,n(NEXT),MYSQL(Query resultid ${${ARG1}}\ SELECT\ @_UPDATE_RESULT)
-exten => s,n,MYSQL(Fetch foundRow ${resultid} @_UPDATE_RESULT)
+exten => s,2,MYSQL(Query resultid ${${ARG1}}\ CALL\ P_UPDATE_RESTORE_IDAGENTFORMA_BY_NUMAPPEL\(\'${ARG2}\'\,@_NUMAPPEL_INTERIM\,@_NOM_AGENT\,@_UPDATE_RESULT\))
+exten => s,n(NEXT),MYSQL(Query resultid ${${ARG1}}\ SELECT\ @_NUMAPPEL_INTERIM\,@_NOM_AGENT\, @_UPDATE_RESULT)
+exten => s,n,MYSQL(Fetch foundRow ${resultid} @_NUMAPPEL_INTERIM @_NOM_AGENT @_UPDATE_RESULT)
 exten => s,n,MYSQL(Clear ${resultid})
 exten => s,n,MYSQL(Disconnect ${${ARG1}})
 exten => s,n,gotoif($[${MYSQL_STATUS}=0]?$[${PRIORITY}+1]:${MACRO_EXTEN},$[${MACRO_PRIORITY}+201])
 exten => s,n,set(UPDATE_RESULT_STATUS=${@_UPDATE_RESULT})
+exten => s,n,set(${ARG3}=${@_NUMAPPEL_INTERIM})
+exten => s,n,set(${ARG4}=${@_NOM_AGENT})
 exten => s,n,gotoif($[${UPDATE_RESULT_STATUS} = 1]?$[${PRIORITY}+1]:$[${PRIORITY}+3])
 exten => s,n,noop(${UPDATE_RESULT_STATUS})
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
@@ -130,6 +145,22 @@ exten => s,n,noop(MYSQL_STATUS:${MYSQL_STATUS})
 exten => s,n,gotoif($[${MYSQL_STATUS}=0]?$[${PRIORITY}+1]:SYSTEM_ERROR)
 exten => s,n,GotoIf($[${MATH(${idprofile} > 0)}=TRUE]?$[${PRIORITY}+1]:$[${PRIORITY}+3])
 exten => s,n,set(${ARG3}=${idprofile})
+exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
+exten => s,n(SYSTEM_ERROR),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
+
+[macro-sofie_sql_get_delais]
+exten => s,1,Macro(sofie_sql_connexion,${ARG1},${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
+exten => s,502,goto(sofie_finappel,s,1)
+exten => s,2,set(MYSQL_STATUS=-1)
+exten => s,n,set(unite_delais=)
+exten => s,n,MYSQL(Query resultid ${${ARG1}}\ SELECT\ `f_getDelaisPriseCmd`\(\)\ AS DELAIS\,`f_getUniteDelais`\(\)\ AS UNITE)
+exten => s,5,MYSQL(Fetch foundRow ${resultid} delais unite)
+exten => s,n,MYSQL(Clear ${resultid})
+exten => s,n,MYSQL(Disconnect ${${ARG1}})
+exten => s,n,noop(MYSQL_STATUS:${MYSQL_STATUS})
+exten => s,n,gotoif($[${MYSQL_STATUS}=0]?$[${PRIORITY}+1]:SYSTEM_ERROR)
+exten => s,n,set(${ARG2}=${delais})
+exten => s,n,set(${ARG3}=${unite})
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 exten => s,n(SYSTEM_ERROR),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
 

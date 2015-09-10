@@ -1,12 +1,14 @@
 [macro-sofie_general_parameters]
 exten => s,1,set(sofie_LAND=fr)
+exten => s,n,set(ENABLE_BLACKLIST=TRUE);
+exten => s,n,set(ENABLE_WHILELIST=FALSE); Ce parametre est a FALSE par defaut, par conséquent tous les numéros sont autorisés.
 exten => s,n,set(sofie_RDNIS=4405)
 exten => s,n,set(sofie_DNID=4405)]
 exten => s,n,set(sofie_SMS_SHORTCODE=77789417)
 exten => s,n,set(sofie_SMS_NUM_MODEM=1)
 exten => s,n,set(sofie_SMS_PREFIXE=+225)
-exten => s,7,Macro(sofie_connexions_db)
-exten => s,8,set(CONN2=0)
+exten => s,9,Macro(sofie_connexions_db)
+exten => s,10,set(CONN2=0)
 exten => s,n,set(CONN1=0)
 exten => s,n,set(localCPT=0)
 exten => s,n,set(PROC_NAME=PROC_GET_NB_LISTE_BY_CODEKIT_NEW)
