@@ -58,6 +58,7 @@ exten => s,n,GotoIf($["${ARG1}" = "notif-sms-init-rep"]?s-notif-sms-init-rep,1:$
 exten => s,n,GotoIf($["${ARG1}" = "notif-sms-init-agent"]?s-notif-sms-init-agent,1:$[${PRIORITY}+1])
 exten => s,n,GotoIf($["${ARG1}" = "notif-sms-panne"]?s-notif-sms-panne,1:$[${PRIORITY}+1])
 exten => s,n,GotoIf($["${ARG1}" = "notif-sms-reparation"]?s-notif-sms-reparation,1:$[${PRIORITY}+1])
+exten => s,n,GotoIf($["${ARG1}" = "notif-sms-nonreparation"]?s-notif-sms-nonreparation,1:$[${PRIORITY}+1])
 exten => s,n,GotoIf($["${ARG1}" = "notif-sms-cde-rep"]?s-notif-sms-cde-rep,1:$[${PRIORITY}+1])
 exten => s,n,GotoIf($["${ARG1}" = "notif-sms-cde-agent"]?s-notif-sms-cde-agent,1:$[${PRIORITY}+1])
 exten => s,n,GotoIf($["${ARG1}" = "notif-sms-absence"]?s-notif-sms-absence,1:$[${PRIORITY}+1])
@@ -78,6 +79,9 @@ exten => s-notif-sms-panne,n,goto(s-notif,1)
 
 exten => s-notif-sms-reparation,1,set(WHERE=SCRIPT_CONTEXT\=\'sofie_enreg_incident\'\ AND NOTIFICATION_SMS\=\'NOTIF_REPARATION\')
 exten => s-notif-sms-reparation,n,goto(s-notif,1)
+
+exten => s-notif-sms-nonreparation,1,set(WHERE=SCRIPT_CONTEXT\=\'sofie_enreg_incident\'\ AND NOTIFICATION_SMS\=\'NOTIF_NONREPARATION\')
+exten => s-notif-sms-nonreparation,n,goto(s-notif,1)
 
 exten => s-notif-sms-cde-rep,1,set(WHERE=SCRIPT_CONTEXT\=\'sofie_confirmation_cde\'\ AND NOTIFICATION_SMS\=\'NOTIF_CDE_REP\')
 exten => s-notif-sms-cde-rep,n,goto(s-notif,1)

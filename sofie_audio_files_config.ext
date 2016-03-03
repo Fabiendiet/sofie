@@ -27,10 +27,11 @@ exten => s,n,set(sofie_msg_saisie_num_forage=msg_saisie_num_forage)
 ;exten => s,n,set(sofie_msg_menu_comite_eau0=msg_menu_comite_eau1)
 ;exten => s,n,set(sofie_msg_menu_comite_eau0=msg_menu_comite_eau1)
 exten => s,n,set(sofie_msg_menu_comite_eau1=msg_menu_comite_eau1)
-exten => s,n,set(sofie_msg_menu_comite_eau2=msg_menu_comite_eau1)
+exten => s,n,set(sofie_msg_menu_comite_eau2=msg_menu_comite_eau2)
+exten => s,n,set(sofie_msg_menu_comite_eau3=msg_menu_comite_eau3)
 exten => s,n,set(sofie_msg_confirmation_comite_eau1=msg_confirmation_comite_eau1)
 exten => s,n,set(sofie_msg_confirmation_comite_eau2=msg_confirmation_comite_eau2)
-exten => s,n,set(sofie_msg_menu_comite_eau2=msg_menu_comite_eau2)
+exten => s,n,set(sofie_msg_confirmation_comite_eau3=msg_confirmation_comite_eau1)
 
 ;[sofie_reparateur]
 exten => s,n,set(sofie_msg_menu_reparateur=msg_menu_reparateur)
