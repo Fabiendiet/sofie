@@ -28,16 +28,6 @@ exten => s,n,set(${ARG1}=${${ARG1}})
 exten => s,n,MYSQL(Disconnect ${${ARG1}})
 ;exten => s,n,set(CONN1=0)
 
-[macro-sofie_sql_insert_sendsms]
-exten => s,1,Macro(sofie_sql_connexion,${ARG1},${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
-exten => s,502,goto(sofie_finappel,s,1)
-exten => s,2,MYSQL(Query resultid ${${ARG1}} INSERT\ INTO\ t_sendsms\(SMS_DATE\,SENDER\,RECEIVER\,CONTENT\,ORIGIN\,STATUS\)value \(UTC_TIMESTAMP\(\)\,\'${ARG2}\'\,\'${ARG3}\'\,\'${ARG4}\'\,\'${ARG5}\'\,\'${ARG6}\'\))
-exten => s,n,gotoif($[${MYSQL_STATUS}=0]?$[${PRIORITY}+2]:$[${PRIORITY}+1])
-exten => s,n,MYSQL(Connect\ ${ARG1}\ ${sofie_DATABASE_IPSERVER}\ ${sofie_DATABASE_USER}\ ${sofie_DATABASE_PASSWD}\ ${sofie_DATABASE_NAME})
-exten => s,n,set(${ARG1}=${${ARG1}})
-exten => s,n,MYSQL(Disconnect ${${ARG1}})
-;exten => s,n,set(CONN1=0)
-
 [macro-sofie_sql_init_forage_number]
 exten => s,1,Macro(sofie_sql_connexion,${ARG1},${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
 exten => s,502,goto(sofie_finappel,s,1)
@@ -53,26 +43,9 @@ exten => s,n,noop(${INIT_STATUS})
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
 
-[macro-sofie_sql_insert_whitelist]
-exten => s,1,Set(DB(whitelist/${ARG1})=1)
-exten => s,n,noop(${DB(whitelist/${ARG1})})
-exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
-
-[macro-sofie_sql_check_whitelist]
-exten => s,1,GotoIf(${DB(whitelist/${ARG1})}?continue:blacklisted)
-exten => s,n(continue),noop(${DB(whitelist/${ARG1})})
-exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
-exten => s,n(blacklisted),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
-;exten => _X.,5,System(/usr/sbin/asterisk -rx "database put whitelist ${ARG1} 1");Permet d ajouter la valeur de ${ARG1} dans la whitelist 
-;exten => _X.,5,GotoIf(${DB_DELETE(whitelist/${ARG1})}?next); Permet de supprimer la  valeur de ${ARG1} de la whitelist
-
-;[macro-sofie_sql_getsmscontent]
-;exten => s,1,Macro(sofie_sql_select,t_sms_content,SMS_CONTENT\,DESTINATION_USER_PROFIL,SCRIPT_CONTEXT\=\'sofie_enreg_incident\'\ AND NOTIFICATION_SMS\=\'NOTIF_PANNE\',T)
-;exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
-
 [macro-sofie_sql_getsmscontent]
-exten => s,1,Macro(sofie_sql_select,${ARG1},${ARG2},${ARG3},T)
-exten => s,2,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
+exten => s,1,Macro(sofie_sql_select,t_sms_content,SMS_CONTENT\,DESTINATION_USER_PROFIL,SCRIPT_CONTEXT\=\'sofie_enreg_incident\'\ AND NOTIFICATION_SMS\=\'NOTIF_PANNE\',TAB_SMS_CONTENT)
+exten => s,n,Set(${ARG5}=TAB_SMS_CONTENT_CODE)
 
 [macro-sofie_sql_get_nb_liste_by_codebv]
 ;exten => s,1,Macro(conn,${MYSQLHOST},${MYSQLUSER},${MYSQLPASSWORD},${MYSQLDB})
@@ -128,15 +101,13 @@ exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
 [macro-sofie_sql_restore_idagentforma_by_phonenum]
 exten => s,1,Macro(sofie_sql_connexion,${ARG1},${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
 exten => s,502,goto(sofie_finappel,s,1)
-exten => s,2,MYSQL(Query resultid ${${ARG1}}\ CALL\ P_UPDATE_RESTORE_IDAGENTFORMA_BY_NUMAPPEL\(\'${ARG2}\'\,@_NUMAPPEL_INTERIM\,@_NOM_AGENT\,@_UPDATE_RESULT\))
-exten => s,n(NEXT),MYSQL(Query resultid ${${ARG1}}\ SELECT\ @_NUMAPPEL_INTERIM\,@_NOM_AGENT\, @_UPDATE_RESULT)
-exten => s,n,MYSQL(Fetch foundRow ${resultid} @_NUMAPPEL_INTERIM @_NOM_AGENT @_UPDATE_RESULT)
+exten => s,2,MYSQL(Query resultid ${${ARG1}}\ CALL\ P_UPDATE_RESTORE_IDAGENTFORMA_BY_NUMAPPEL\(\'${ARG2}\'\,@_UPDATE_RESULT\))
+exten => s,n(NEXT),MYSQL(Query resultid ${${ARG1}}\ SELECT\ @_UPDATE_RESULT)
+exten => s,n,MYSQL(Fetch foundRow ${resultid} @_UPDATE_RESULT)
 exten => s,n,MYSQL(Clear ${resultid})
 exten => s,n,MYSQL(Disconnect ${${ARG1}})
 exten => s,n,gotoif($[${MYSQL_STATUS}=0]?$[${PRIORITY}+1]:${MACRO_EXTEN},$[${MACRO_PRIORITY}+201])
 exten => s,n,set(UPDATE_RESULT_STATUS=${@_UPDATE_RESULT})
-exten => s,n,set(${ARG3}=${@_NUMAPPEL_INTERIM})
-exten => s,n,set(${ARG4}=${@_NOM_AGENT})
 exten => s,n,gotoif($[${UPDATE_RESULT_STATUS} = 1]?$[${PRIORITY}+1]:$[${PRIORITY}+3])
 exten => s,n,noop(${UPDATE_RESULT_STATUS})
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
@@ -155,22 +126,6 @@ exten => s,n,noop(MYSQL_STATUS:${MYSQL_STATUS})
 exten => s,n,gotoif($[${MYSQL_STATUS}=0]?$[${PRIORITY}+1]:SYSTEM_ERROR)
 exten => s,n,GotoIf($[${MATH(${idprofile} > 0)}=TRUE]?$[${PRIORITY}+1]:$[${PRIORITY}+3])
 exten => s,n,set(${ARG3}=${idprofile})
-exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
-exten => s,n(SYSTEM_ERROR),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
-
-[macro-sofie_sql_get_delais]
-exten => s,1,Macro(sofie_sql_connexion,${ARG1},${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
-exten => s,502,goto(sofie_finappel,s,1)
-exten => s,2,set(MYSQL_STATUS=-1)
-exten => s,n,set(unite_delais=)
-exten => s,n,MYSQL(Query resultid ${${ARG1}}\ SELECT\ `f_getDelaisPriseCmd`\(\)\ AS DELAIS\,`f_getUniteDelais`\(\)\ AS UNITE)
-exten => s,5,MYSQL(Fetch foundRow ${resultid} delais unite)
-exten => s,n,MYSQL(Clear ${resultid})
-exten => s,n,MYSQL(Disconnect ${${ARG1}})
-exten => s,n,noop(MYSQL_STATUS:${MYSQL_STATUS})
-exten => s,n,gotoif($[${MYSQL_STATUS}=0]?$[${PRIORITY}+1]:SYSTEM_ERROR)
-exten => s,n,set(${ARG2}=${delais})
-exten => s,n,set(${ARG3}=${unite})
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 exten => s,n(SYSTEM_ERROR),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
 
@@ -363,7 +318,7 @@ exten => s,n(mysql_error),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORIT
 [macro-sofie_sql_insert_notification]
 exten => s,1,Macro(sofie_sql_connexion,${ARG1},${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
 exten => s,502,hangup()
-exten => s,2,MYSQL(Query resultid ${${ARG1}} CALL\ P_INSERT_NOTIFICATION(${ARG2}\,f_getPanneIdByPanneTicket\(\'\${ARG3\}\'\)\,f_getIDNumappelByNumAppel\(\'\${ARG4\}\'\)\))
+exten => s,2,MYSQL(Query resultid ${${ARG1}} CALL\ P_INSERT_NOTIFICATION(${ARG2}\,f_getPanneIdByPanneTicket\(\'\${ARG3\}\'\)\,f_getIDNumappelByNumAppel\(\'\${CALLERID\(Num\)\}\'\)))
 exten => s,n,MYSQL(Disconnect ${${ARG1}})
 exten => s,n,GotoIf($[${MYSQL_STATUS}=0]?$[${PRIORITY}+1]:mysql_error)
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
@@ -426,9 +381,9 @@ exten => s,n(mysql_error),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORIT
 [macro-sofie_sql_get_forage_infos_by_comite_phonenum]
 exten => s,1,Macro(sofie_sql_connexion,CONN1,${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
 exten => s,502,goto(sofie_finappel,s,1)
-exten => s,2,MYSQL(Query resultid ${CONN1}\ CALL\ P_SELECT_INFOS_OUVRAGE_BY_NUMAPPEL_COMITE(\'${ARG1\}\'\,@_CODEOUVRAGE\,@_IDLOCALITE\,@_NOMLOCALITE\,@_NOMCOMITE\,@_NUMAPPEL_REP\,@_NUMAGENT_FORMA\,@_NUMAGENT_SOCIOLOGUE\,@_NUM_DR\,@_NOMREP\,@_NOMAGENT_FORMA\,@_NOMAGENT_SOCIOLOGUE\,@_NOM_DR\,@_STATUTOUVRAGE\,@_VALIDATED\,@_NUMERO_PANNE\))
-exten => s,n,MYSQL(Query resultid ${CONN1} SELECT\ @_CODEOUVRAGE\,@_IDLOCALITE\,@_NOMLOCALITE\,@_NOMCOMITE\,@_NUMAPPEL_REP\,@_NUMAGENT_FORMA\,@_NUMAGENT_SOCIOLOGUE\,@_NUM_DR\,@_NOMREP\,@_NOMAGENT_FORMA\,@_NOMAGENT_SOCIOLOGUE\,@_NOM_DR\,@_STATUTOUVRAGE\,@_VALIDATED\,@_NUMERO_PANNE)
-exten => s,n,MYSQL(Fetch foundRow ${resultid} @_CODEOUVRAGE @_IDLOCALITE @_NOMLOCALITE @_NOMCOMITE @_NUMAPPEL_REP @_NUMAGENT_FORMA @_NUMAGENT_SOCIOLOGUE @_NUM_DR @_NOMREP @_NOMAGENT_FORMA @_NOMAGENT_SOCIOLOGUE @_NOM_DR @_STATUTOUVRAGE @_VALIDATED @_NUMERO_PANNE)
+exten => s,2,MYSQL(Query resultid ${CONN1}\ CALL\ P_SELECT_INFOS_OUVRAGE_BY_NUMAPPEL_COMITE(\'${ARG1\}\'\,@_CODEOUVRAGE\,@_IDLOCALITE\,@_NOMLOCALITE\,@_NOMCOMITE\,@_NUMAPPEL_REP\,@_NUMAGENT_FORMA\,@_NUMAGENT_SOCIOLOGUE\,@_NUM_DR\,@_NOMREP\,@_NOMAGENT_FORMA\,@_NOMAGENT_SOCIOLOGUE\,@_NOM_DR\,@_STATUTOUVRAGE\))
+exten => s,n,MYSQL(Query resultid ${CONN1} SELECT\ @_CODEOUVRAGE\,@_IDLOCALITE\,@_NOMLOCALITE\,@_NOMCOMITE\,@_NUMAPPEL_REP\,@_NUMAGENT_FORMA\,@_NUMAGENT_SOCIOLOGUE\,@_NUM_DR\,@_NOMREP\,@_NOMAGENT_FORMA\,@_NOMAGENT_SOCIOLOGUE\,@_NOM_DR\,@_STATUTOUVRAGE)
+exten => s,n,MYSQL(Fetch foundRow ${resultid} @_CODEOUVRAGE @_IDLOCALITE @_NOMLOCALITE @_NOMCOMITE @_NUMAPPEL_REP @_NUMAGENT_FORMA @_NUMAGENT_SOCIOLOGUE @_NUM_DR @_NOMREP @_NOMAGENT_FORMA @_NOMAGENT_SOCIOLOGUE @_NOM_DR @_STATUTOUVRAGE)
 exten => s,n,MYSQL(Clear ${resultid})
 exten => s,n,MYSQL(Disconnect ${CONN1})
 exten => s,n,set(${ARG2}=${@_CODEOUVRAGE})
@@ -444,13 +399,9 @@ exten => s,n,set(${ARG11}=${@_NOMAGENT_FORMA})
 exten => s,n,set(${ARG12}=${@_NOMAGENT_SOCIOLOGUE})
 exten => s,n,set(${ARG13}=${@_NOM_DR})
 exten => s,n,set(${ARG14}=${@_STATUTOUVRAGE})
-exten => s,n,set(${ARG15}=${@_VALIDATED})
-exten => s,n,set(${ARG16}=${@_NUMERO_PANNE})
 exten => s,n,GotoIf($[${MYSQL_STATUS}=0]?$[${PRIORITY}+1]:mysql_error)
-exten => s,n,GotoIf($[${ARG15}='-1']?ouvrage_nok:$[${PRIORITY}+1])
 exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 exten => s,n(mysql_error),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
-exten => s,n(ouvrage_nok),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+201])
 
 [macro-sofie_sql_get_forage_infos_by_rep_phonenum]
 exten => s,1,Macro(sofie_sql_connexion,CONN1,${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
@@ -596,9 +547,9 @@ exten => s,n(mysql_error),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORIT
 ;COLUMN_${select_column1} -> Renvoi la liste des valeurs pour la colonne select_column1 
 ;exten => s,1,Macro(sofie_sql_select,repartition,"SIGLEPARTI\,CODEPART","CODECELI\=\${CODECELI_VALUE\}")
 [macro-sofie_sql_select]
-exten => s,1,set(ARRAY(NB_LISTE|SELECT_NUMBER_OF_RECORD)=0,0)
-exten => s,2,set(ARRAY(localCPT1|foundRow)=-1,-1)
-exten => s,3,set(sofie_sql_select_REPLACE_NEW_VAR=)
+exten => s,1,set(ARRAY(NB_LISTE|SELECT_NUMBER_OF_RECORD=0,0)
+exten => s,2,set(localCPT1=-1)
+exten => s,3,noop()
 exten => s,4,Macro(sofie_sql_connexion,CONN1,${sofie_DATABASE_IPSERVER},${sofie_DATABASE_USER},${sofie_DATABASE_PASSWD},${sofie_DATABASE_NAME})
 exten => s,505,goto(sofie_finappel,s,1)
 exten => s,5,gotoif($[${ISNULL(${ARG3})}]?$[${PRIORITY}+1]:$[${PRIORITY}+3])
@@ -610,8 +561,8 @@ exten => s,n,Macro(mos_split,${ARG2},\,,sofie_sql_select_SPLIT_LIST)
 exten => s,n,MYSQL(Query resultid ${CONN1}\ SELECT\ \${ARG2}\ FROM\ \${ARG1}\ ${WHERE_CLAUSE})
 exten => s,n(fetchrow),MYSQL(Fetch foundRow ${resultid} ${sofie_sql_select_REPLACE_NEW_VAR})  ; fetch row
 exten => s,n,noop(foundRow=${foundRow})
-exten => s,n,GotoIf($[${MATH(${LEN(sofie_sql_select_REPLACE_NEW_VAR)}) > 0)}=TRUE]?$[${PRIORITY}+1]:s-hangup,1)
-exten => s,n,GotoIf($[${MATH(${foundRow} == 1)}=TRUE]?loop:done)
+exten => s,n,gotoif($[${MATH(${LEN(sofie_sql_select_REPLACE_NEW_VAR)}) > 0)}=TRUE]?$[${PRIORITY}+1]:s-hangup,1)
+exten => s,n,GotoIf($["${foundRow}" = "1"]?loop:done)  ; leave loop if no row found
 exten => s,n(loop),set(localCPT1=$[${localCPT1}+1])
 exten => s,n,set(localCPT2=-1)
 exten => s,n(loop2),set(localCPT2=$[${localCPT2}+1])
@@ -722,8 +673,8 @@ exten => s,n,MYSQL(Disconnect ${${ARG1}})
 ;exten => s,n,set(CONN1=0)
 exten => s,n,Set(CODE_INIT=${@_CODE_INIT})
 exten => s,n,gotoif($[${MYSQL_STATUS}=0]?$[${PRIORITY}+1]:SYSTEM_ERROR)
-exten => s,n,GotoIf($[${MATH(${@_INIT_FOR_OTHER_NUMBER}>0)}=TRUE]?NUMBER_IN_USE:$[${PRIORITY}+1])
-exten => s,n,GotoIf($[${MATH(${@_INIT_FOR_OTHER_CODE}>0)}=TRUE]?CODE_IN_USE:$[${PRIORITY}+1])
+exten => s,n,GotoIf($[${MATH(${@_INIT_FOR_OTHER_NUMBER} > 0)}=TRUE]?NUMBER_IN_USE:$[${PRIORITY}+1])
+exten => s,n,GotoIf($[${MATH(${@_INIT_FOR_OTHER_CODE} > 0)}=TRUE]?CODE_IN_USE:$[${PRIORITY}+1])
 exten => s,n,gotoif($["${CODE_INIT}"="NULL"]?$[${PRIORITY}+1]:CODE_ERROR)
 exten => s,n(VALIDE_CODE),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 exten => s,n(CODE_IN_USE),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
@@ -742,15 +693,11 @@ exten => s,n,MYSQL(Disconnect ${${ARG1}})
 exten => s,n,Set(INIT_STATUS=${@_INIT_STATUS})
 exten => s,n,Set(CODE_VALIDITY=${@_CODE_VALIDITY})
 exten => s,n,gotoif($[${MYSQL_STATUS}=0]?$[${PRIORITY}+1]:SYSTEM_ERROR)
-exten => s,n,gotoif($[${INIT_STATUS}=0]?$[${PRIORITY}+1]:CODE_IN_USE)
-exten => s,n,gotoif($[${CODE_VALIDITY}=1]?VALIDE_CODE:NO_VALIDE_CODE)
-
-;exten => s,n,gotoif($[${CODE_VALIDITY}=1]?$[${PRIORITY}+1]:CODE_ERROR)
-;exten => s,n,gotoif($[${INIT_STATUS}=0]?$[${PRIORITY}+1]:CODE_IN_USE)
-
+exten => s,n,GotoIf($[${MATH(${@_CODE_VALIDITY} > 0)}=TRUE]?$[${PRIORITY}+1]:CODE_ERROR)
+exten => s,n,GotoIf($[${MATH(${@_INIT_STATUS} > 0)}=TRUE]?CODE_IN_USE:$[${PRIORITY}+1])
 exten => s,n(VALIDE_CODE),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 exten => s,n(CODE_IN_USE),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
-exten => s,n(NO_VALIDE_CODE),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+201])
+exten => s,n(CODE_ERROR),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+201])
 exten => s,n(SYSTEM_ERROR),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+301])
 
 [macro-sofie_sql_verif_init]

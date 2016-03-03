@@ -96,30 +96,9 @@ exten => s-notif,2,Macro(sofie_sql_getsmscontent,t_sms_content,DA\,SMS_CONTENT,$
 exten => s-notif,102,verbose(1|erreur lors de la reconstitution du message.)
 exten => s-notif,3(NEXT_SMS),set(sofie_sms_local_CPT=$[${sofie_sms_local_CPT}+1])
 exten => s-notif,n,GotoIf($[${MATH(${sofie_sms_local_CPT} <= ${SELECT_NUMBER_OF_RECORD})}=TRUE]?loop:end_loop)
-;exten => s-notif,n(loop),System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${EVAL(${T_DA${sofie_sms_local_CPT}})}&Modem=${sofie_SMS_NUM_MODEM}&Content=${EVAL(${T_SMS_CONTENT${sofie_sms_local_CPT}})}")
-exten => s-notif,n(loop),Macro(sofie_enreg_sendsms,${sofie_SMS_SHORTCODE},${EVAL(${T_DA${sofie_sms_local_CPT}})},\'${EVAL(${T_SMS_CONTENT${sofie_sms_local_CPT}})}\',${ARG3},${ARG4})
+exten => s-notif,n(loop),System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${EVAL(${T_DA${sofie_sms_local_CPT}})}&Modem=${sofie_SMS_NUM_MODEM}&Content=${EVAL(${T_SMS_CONTENT${sofie_sms_local_CPT}})}")
 exten => s-notif,n,goto(NEXT_SMS)
 exten => s-notif,n(end_loop),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
-
-[macro-sofie_sendsms]
-exten => s,1,set(WHERE=SCRIPT_CONTEXT\=\'${ARG1}\'\ AND NOTIFICATION_SMS\=\'${ARG2}\')
-exten => s,n,goto(s-notif,1)
-
-exten => s-notif,1,set(sofie_sms_local_CPT=-1)
-exten => s-notif,2,Macro(sofie_sql_getsmscontent,t_sms_content,DA\,SMS_CONTENT,${WHERE},T)
-exten => s-notif,102,verbose(1|erreur lors de la reconstitution du message.)
-exten => s-notif,3(NEXT_SMS),set(sofie_sms_local_CPT=$[${sofie_sms_local_CPT}+1])
-exten => s-notif,n,GotoIf($[${MATH(${sofie_sms_local_CPT} <= ${SELECT_NUMBER_OF_RECORD})}=TRUE]?loop:end_loop)
-exten => s-notif,n(loop),Macro(sofie_enreg_sendsms,${sofie_SMS_SHORTCODE},${EVAL(${T_DA${sofie_sms_local_CPT}})},\'${EVAL(${T_SMS_CONTENT${sofie_sms_local_CPT}})}\',${ARG3},${ARG4})
-;exten => s-notif,n(loop),System(lynx -dump "http://${sofie_SMS_IPSERVER}/sms/sendsms.php?SOA=${sofie_SMS_SHORTCODE}&DA=${EVAL(${T_DA${sofie_sms_local_CPT}})}&Osms=1&Modem=${sofie_SMS_NUM_MODEM}&Content=${EVAL(${T_SMS_CONTENT${sofie_sms_local_CPT}})}")
-exten => s-notif,n,goto(NEXT_SMS)
-exten => s-notif,n(end_loop),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
-
-[macro-sofie_enreg_sendsms]
-exten => s,1,Macro(sofie_sql_insert_sendsms,CONN1,${ARG1},${ARG2},${ARG3},${ARG4},${ARG5})
-exten => s,102,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101]);playback(${sofie_audio_file_dir}/${sofie_msg_system_error})
-exten => s,103,hangup
-exten => s,2,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 
 [macro-sofie2014get_data];${ARG1}=NBI,${ARG2}=${succes_msg_saisie_nb_inscrit}
 exten => s,1,noop()

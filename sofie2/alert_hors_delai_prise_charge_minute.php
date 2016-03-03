@@ -1,8 +1,8 @@
 <?php
-$mysql_host = "192.168.1.110";
+$mysql_host = "localhost";
 $mysql_user = "sofie";
 $mysql_password = "poiuyt";
-$mysql_dbname = "db_sofiev3";
+$mysql_dbname = "db_sofie";
 
 $sms_content = "";
 $dbObject = "v_forage_hors_delai_prise_charge_minute";
