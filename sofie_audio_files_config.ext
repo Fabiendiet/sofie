@@ -45,7 +45,8 @@ exten => s,n,set(sofie_msg_acces_refuse2=msg_acces_refuse2)
 exten => s,n,set(sofie_msg_menu_agent=msg_menu_agent)
 exten => s,n,set(sofie_msg_menu_agent1=msg_menu_agent1)
 exten => s,n,set(sofie_msg_menu_agent2=msg_menu_agent2)
-exten => s,n,set(sofie_msg_menu_sociologue=msg_menu_sociologue)
+exten => s,n,set(sofie_msg_menu_sociologue1=msg_menu_sociologue)
+exten => s,n,set(sofie_msg_menu_sociologue2=msg_menu_sociologue)
 exten => s,n,set(sofie_msg_saisie_agent=msg_saisie_agent)
 
 ;[sofie_confirmation_cde]
