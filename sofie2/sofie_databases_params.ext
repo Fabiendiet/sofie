@@ -1,6 +1,0 @@
-[macro-sofie_connexions_db]
-exten => s,1,set(sofie_DATABASE_IPSERVER=localhost)
-exten => s,n,set(sofie_DATABASE_USER=sofie)
-exten => s,n,set(sofie_DATABASE_PASSWD=poiuyt)
-exten => s,n,set(sofie_DATABASE_NAME=db_sofiev3)
-exten => s,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
