@@ -3,7 +3,7 @@ cli="/usr/sbin/asterisk -rx"
 dump=/tmp/blacklist.backup
 blacklist=/tmp/blacklist_phonenumber.txt
  
-curl http://localhost/sofie_blacklisted_numbers/blacklist_phonenumber.txt > $blacklist
+curl http://localhost/sofiev4/sofie_blacklisted_numbers/blacklist_phonenumber.txt > $blacklist
  
 echo "Dumping old blacklist to $dump"
 $cli "database show blacklist" > $dump

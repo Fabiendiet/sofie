@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.5.43, for Linux (x86_64)
 --
--- Host: localhost    Database: db_sofiev3
+-- Host: localhost    Database: db_sofiev3_back
 -- ------------------------------------------------------
 -- Server version	5.5.43
 
@@ -16,14 +16,14 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `db_sofiev3`
+-- Current Database: `db_sofiev3_back`
 --
 
-/*!40000 DROP DATABASE IF EXISTS `db_sofiev3`*/;
+/*!40000 DROP DATABASE IF EXISTS `db_sofiev3_back`*/;
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `db_sofiev3` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `db_sofiev3_back` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
-USE `db_sofiev3`;
+USE `db_sofiev3_back`;
 
 --
 -- Table structure for table `groupes_droits`
@@ -1672,7 +1672,7 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
--- Dumping routines for database 'db_sofiev3'
+-- Dumping routines for database 'db_sofiev3_back'
 --
 /*!50003 DROP FUNCTION IF EXISTS `f_checkAgentStatusByNumAppel` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -3803,10 +3803,10 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
--- Current Database: `db_sofiev3`
+-- Current Database: `db_sofiev3_back`
 --
 
-USE `db_sofiev3`;
+USE `db_sofiev3_back`;
 
 --
 -- Final view structure for view `v_forage_hors_delai_prise_charge_heure`

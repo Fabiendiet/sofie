@@ -282,13 +282,11 @@ exten => s-ifexist_cde,n,GotoIf($[${MATH(${sofie_NUMERO_SOCIOLOGUE} == ${CALLERI
 exten => s-ifexist_cde,n(GOTO_CDE_EXIST),playback(${sofie_audio_file_dir}/${sofie_msg_commande_existe})
 exten => s-ifexist_cde,n,goto(sofie_finappel,s,1)
 exten => s-ifexist_cde,n(MENU_AGENT),goto(s,GOTO_CONFIRMATION_CDE)
-exten => s-ifexist_cde,n(MENU_AGENT2),goto(s,GOTO_CONFIRMATION_CDE2)
 
 exten => s,10(GOTO_CONFIRMATION_CDE),goto(sofie_confirmation_cde,s,1)
-exten => s,11(GOTO_CONFIRMATION_CDE2),goto(sofie_confirmation_cde,s-enreg_prise_cde,1)
-exten => s,12(GOTO_SIGNALER_NONREPARATION),goto(sofie_enreg_incidents,s-panne_nonreparer,1)
-exten => s,13(GOTO_SIGNALER_REPARATION),goto(sofie_signaler_reparation,s,1)
-exten => s,14(GOTO_GERER_ABSENCE),goto(sofie_gerer_absence,s,1)
+exten => s,11(GOTO_SIGNALER_NONREPARATION),goto(sofie_enreg_incidents,s-panne_nonreparer,1)
+exten => s,12(GOTO_SIGNALER_REPARATION),goto(sofie_signaler_reparation,s,1)
+exten => s,13(GOTO_GERER_ABSENCE),goto(sofie_gerer_absence,s,1)
 
 [sofie_signaler_nonreparation]
 exten => s,1,set(sofie_AGENT_MENU=1)
@@ -316,11 +314,11 @@ exten => s-enreg_prise_cde,5,Macro(saynumber,${sofie_DELAIS_PRISE_CDE},fr)
 exten => s-enreg_prise_cde,6,playback(${sofie_audio_file_dir}/${sofie_msg_nb_${sofie_UNITE_DELAIS}_reparation})
 exten => s-enreg_prise_cde,7,goto(sofie_finappel,s,1)
 
-exten => s-notif-sms-cde-rep,1,Macro(sofie_send_notifcation,notif-sms-cde-rep,3,${sofie_NUMERO_PANNE},1,1)
+exten => s-notif-sms-cde-rep,1,Macro(sofie_send_notifcation,notif-sms-cde-rep,3,1,1)
 exten => s-notif-sms-cde-rep,102,playback(${sofie_audio_file_dir}/${sofie_msg_system_error})
 exten => s-notif-sms-cde-rep,2,goto(s-enreg_prise_cde,3)
 
-exten => s-notif-sms-cde-agent,1,Macro(sofie_send_notifcation,notif-sms-cde-agent,4,${sofie_NUMERO_PANNE},1,1)
+exten => s-notif-sms-cde-agent,1,Macro(sofie_send_notifcation,notif-sms-cde-agent,4,1,1)
 exten => s-notif-sms-cde-agent,103,playback(${sofie_audio_file_dir}/${sofie_msg_system_error})
 exten => s-notif-sms-cde-agent,2,goto(s-enreg_prise_cde,3)
 
@@ -331,7 +329,7 @@ exten => s,n,set(sofie_DELAI_PRISE_CDE=0)
 exten => s,n,set(sofie_DELAI_REPARATION=0)
 exten => s,5,Macro(sofie_sql_verif_pise_cde,CONN1,${ARG2},${sofie_NB_JOURS_REPARATION},sofie_CDE_STATUS,sofie_DELAI_CDE_STATUS)
 exten => s,106,goto(GOTO_CDE_EXIST)
-exten => s,207,goto(s,GOTO_SYSTEM_ERROR)
+exten => s,206,goto(s,GOTO_SYSTEM_ERROR)
 exten => s,6,goto(s-verif_delai,1)
 exten => s,n(GOTO_CDE_EXIST),goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+101])
 exten => s,n(GOTO_SYSTEM_ERROR),playback(${sofie_audio_file_dir}/${sofie_msg_system_error})
@@ -356,7 +354,7 @@ exten => s-verif_delai_1,n,set(${ARG5}=\'\${ARG1}\'\,\'\${ARG2}\'\,\'DEBUT_REP_P
 exten => s-verif_delai_1,n,goto(${MACRO_CONTEXT},${MACRO_EXTEN},$[${MACRO_PRIORITY}+1])
 
 exten => s-verif_delai_2,1,GotoIf($[${MATH(${sofie_STATUTOUVRAGE}==6)}=TRUE]?ENREG_CONFIRMATION_CDE1:$[${PRIORITY}+1])
-exten => s-verif_delai_2,n,GotoIf($[${MATH(${sofie_CDE_STATUS}>=4)}=TRUE]?s,GOTO_CDE_EXIST:ENREG_CONFIRMATION_CDE2)
+exten => s-verif_delai_2,n,GotoIf($[${MATH(${sofie_STATUTOUVRAGE}>=4)}=TRUE]?s,GOTO_CDE_EXIST:ENREG_CONFIRMATION_CDE1)
 exten => s-verif_delai_2,n(ENREG_CONFIRMATION_CDE1),set(sofie_CODE_COULEUR=)
 exten => s-verif_delai_2,n,set(sofie_CODE_COULEUR=4)
 exten => s-verif_delai_2,n,set(${ARG5}=\'\${ARG1}\'\,\'\${ARG2}\'\,\'PANNE_PRISE_CHARGE\'\,\'1\'\,\${sofie_CODE_COULEUR\}\,\@_UPDATE_RESULT)
