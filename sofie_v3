@@ -23,12 +23,6 @@ exten => s,4,gotoif($["${sofie_PROFILE}" = "NULL"]?GOTO_CHOICE_PROFILE:GOTO_PROF
 exten => s,n(GOTO_CHOICE_PROFILE),goto(sofie_standard_init,s,1)
 exten => s,n(GOTO_PROFILE),goto(sofie_services,s,1)
 
-[sofie_set_profil]
-exten => s,1,Macro(svi_menu_choix,${sofie_audio_file_dir}/msg_menu_set_profil,sofie_var_choix,${sofie_audio_file_dir}/${sofie_msg_touche_invalid},${sofie_audio_file_dir}/${sofie_msg_aucune_reponse},3,3,[1-4])
-exten => s,102,goto(sofie_finappel,cptfin,1)
-exten => s,2,set(sofie_PROFILE=${sofie_var_choix})
-exten => s,3,goto(sofie_standard_init,s,1)
-
 [sofie_standard_init]
 exten => s,1,set(ARRAY(sofie_standard_init_local_CPT,sofie_PROFILE)=0,0)
 exten => s,2(REPRISE_SAISIE),Macro(svi_saisie_code,${sofie_audio_file_dir},${sofie_msg_saisie_num_forage},${sofie_msg_erreur_saisie},${sofie_LEN_NUM_FORAGE_MAX},${sofie_LEN_NUM_FORAGE_MIN},${sofie_msg_aucune_reponse},${sofie_msg_corrige_saisie},${sofie_msg_touche_correction_invalid},sofie_NUM_FORAGE_INIT,sofie_standard_init_local_CPT)
